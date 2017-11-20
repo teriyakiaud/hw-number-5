@@ -1,0 +1,61 @@
+---
+title: "hw-number-5"
+output: html_document
+---
+
+```{r}
+library(curl)
+f <- curl("https://raw.githubusercontent.com/fuzzyatelin/fuzzyatelin.github.io/master/AN597_Fall17/KamilarAndCooperData.csv")
+d <- read.csv(f)
+head(d)
+```
+
+```{r}
+d$loghome <- log(d$HomeRange_km2)
+d$logfemale <- log(d$Body_mass_female_mean)
+m <- lm(data = d, d$loghome ~ d$logfemale)
+summary(m)
+```
+
+```{r}
+set <- NULL
+n <- 30  
+#hw did not say how many in sample so I just chose 30
+k <- 1000
+for( i in 1:k) {
+  set[[i]] <- sample(d, size = n, replace = TRUE)
+}
+
+```
+
+```{r}
+glm1 <- glm(d$loghome ~ d$logfemale, data = set)
+summary(glm1)
+
+#im not sure if this part is correct. I think I used what should be the sampled data by using set instead of d.However all the information is exactly the same as what the original lm() gave so something in my code might be wrong.
+```
+
+```{r}
+set1 <- function(formula, data, indices) {
+  d <- data[indices,]
+  fit <- lm(data = d, formula)
+  return(coef(fit))
+}
+
+library(boot)
+set.seed(1234)
+try1 <- boot(data = d, statistic = set1, R = 1000, formula = d$loghome ~ d$logfemale)
+try1
+
+#i also tried this method from the R in Action book and it doesn't seem to be correct either since it is giving me a standard error of 0.
+```
+
+```{r}
+#since the boot method from the boot didn't seem to work correctly to me, I used my values from the for loop instead.
+
+CI <- confint(glm1, level = 0.95)
+CI
+```
+
+
+
