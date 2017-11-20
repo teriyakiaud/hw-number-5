@@ -33,6 +33,8 @@ glm1 <- glm(d$loghome ~ d$logfemale, data = set)
 summary(glm1)
 
 #im not sure if this part is correct. I think I used what should be the sampled data by using set instead of d.However all the information is exactly the same as what the original lm() gave so something in my code might be wrong.
+
+#The standard error here is the same as the lm() function. 
 ```
 
 ```{r}
